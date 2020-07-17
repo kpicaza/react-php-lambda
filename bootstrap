@@ -1,0 +1,38 @@
+#!/opt/bin/php
+<?php
+declare(strict_types=1);
+
+use Bref\Event\Http\FpmHandler;
+use App\ReactRuntime;
+use React\EventLoop\StreamSelectLoop;
+
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
+$appRoot = getenv('LAMBDA_TASK_ROOT');
+
+require $appRoot . '/vendor/autoload.php';
+
+$handler = $appRoot . '/' . getenv('_HANDLER');
+if (! is_file($handler)) {
+    $lambdaRuntime->failInitialization("Handler `$handler` doesn't exist");
+}
+$phpFpm = new FpmHandler($handler);
+try {
+    $phpFpm->start();
+} catch (\Throwable $e) {
+    $lambdaRuntime->failInitialization('Error while starting PHP-FPM', $e);
+}
+
+$loop = new StreamSelectLoop();
+$runtime = new ReactRuntime($loop);
+
+echo 'SOLO TOCA UNA';
+
+$callback = static function() use ($runtime, $phpFpm, &$callback) {
+    $runtime->processNextEvent($phpFpm, $callback);
+};
+
+$loop->futureTick($callback);
+
+$loop->run();
