@@ -1,34 +1,40 @@
-Antidot Framework
-=================
+# React PHP AWS Lambda
 
-This framework is based on concepts and components of other open source software, especially [Zend Expressive](https://docs.zendframework.com/zend-expressive/) and [Zend Stratigillity](https://docs.zendframework.com/zend-stratigility/).
+> Proof of Concept of Running React PHP in aws lambda server
 
-## Installation
+A proof of concept on how to run React-php on a serverless application at AWS Lambda service.
 
-Install a project using [composer](https://getcomposer.org/download/) package manager:
+## Contributors
 
-````bash
-composer create-project antidot-fw/antidot-framework-starter:dev-master dev
-mv dev/.* dev/* ./ && rmdir dev
-php -S 127.0.0.1:8000 -t public
-````
+* [xserrat](https://github.com/xserrat)
+* [kpicaza](https://github.com/kpicaza)
 
-To run it in dev mode, rename `config/services/dependencies.dev.yaml.dist` to `config/services/dependencies.dev.yaml`
+## System Requirements
 
-````bash
-mv config/services/dependencies.dev.yaml.dist config/services/dependencies.dev.yaml
-````
+* AWS Console with configured access
+* Serverless Framework
 
-![Default homepage](https://getting-started.antidotfw.io/images/default-homepage.jpg)
+## Goals
 
-Open another console and check the built-in Cli tool
+[x] Execute an Async PRS-7 Request Handler from PSR-11 container
+[] Execute callable class from PSR-11 container
+[] Execute complete application like DriftPHP from an unique endpoint
 
-````bash
-bin/console
-````
+## Especial thanks
 
-![Default console tool](https://getting-started.antidotfw.io/images/default-console.jpg)
+* [mnapoli](https://github.com/mnapoli) For making Bref, opening a new world of possibilities for PHP
+* [mmoreram](https://github.com/mmoreram) For giving us him's point of view.
 
-#### Disclaimer: 
 
-* This framework is created for educational purposes. The full or partial use of this software is the responsibility of the user.
+## Workaround
+
+* Use Bref PHP-FPM 7.4 Layer
+* We add a custom bootstrap file using a React PHP event loop instead of the "while=true" loop given by default Bref bootstrap.
+* The given handler is managed with promises by the [ReactHandler]() class 
+* We replace the [LambdaRuntime]() class by [ReactRuntime]() 
+
+## Captures
+
+Using Antidot Framework application's container, event dispatcher and Request handler returning promises.
+ 
+![Logs](images/first-functional-log.png) 
