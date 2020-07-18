@@ -10,14 +10,13 @@ plugins:
 
 functions:
     api:
-        handler: public/index.php
+        handler: App\Application\Http\Handler\HomePage
         description: ''
         timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
         layers:
             - 'arn:aws:lambda:eu-west-1:209497400698:layer:php-74-fpm:12'
         events:
             -   http: 'ANY /'
-            -   http: 'ANY /{proxy+}'
 
 # Exclude files from deployment
 package:

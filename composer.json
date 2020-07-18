@@ -7,12 +7,6 @@
       "name": "kpicaza"
     }
   ],
-  "repositories": [
-    {
-      "type": "path",
-      "url": "modules/bref"
-    }
-  ],
   "require": {
     "php": "^7.4",
     "ext-json": "*",

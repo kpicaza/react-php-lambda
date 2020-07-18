@@ -6,13 +6,12 @@ namespace App;
 
 use Bref\Context\Context;
 use Bref\Context\ContextBuilder;
-use Bref\Event\Http\HttpHandler;
+use Bref\Event\Http\HttpResponse;
 use Psr\Http\Message\ResponseInterface;
 use React\EventLoop\LoopInterface;
 use React\Http\Browser;
 use Throwable;
 
-use function Clue\React\Block\await;
 use function explode;
 use function get_class;
 use function getenv;
@@ -43,7 +42,7 @@ class ReactRuntime
         $this->client->withProtocolVersion('1.0');
     }
 
-    public function processNextEvent(HttpHandler $handler, callable $callback): void
+    public function processNextEvent(ReactHandler $handler, callable $callback): void
     {
         $promise = $this->client->get(
             "http://{$this->apiUrl}/2018-06-01/runtime/invocation/next",
@@ -75,57 +74,83 @@ class ReactRuntime
 
                     return resolve([$event, $context]);
                 },
-                function (Throwable $e) {
+                function (Throwable $e) use ($callback) {
                     $this->failInitialization('Process Next Event failed.', $e);
+                    $this->loop->futureTick($callback);
                 }
             )
             ->then(
-                function (array $data) use ($handler) {
+                static function (array $data) use ($handler) {
                     /** @var Context $context */
                     [$event, $context] = $data;
+                    if ($context->getAwsRequestId() === '') {
+                        throw new \Exception('Failed to determine the Lambda invocation ID');
+                    }
+
+                    return [$handler->handle($event, $context), $context];
+                },
+                function (Throwable $e) use ($callback) {
+                    $this->failInitialization('Process Next Event failed.', $e);
+                    $this->loop->futureTick($callback);
+                }
+            )->then(
+                function (array $data) use ($callback) {
                     try {
-                        if ($context->getAwsRequestId() === '') {
-                            throw new \Exception('Failed to determine the Lambda invocation ID');
-                        }
-                        $jsonData = json_encode($handler->handle($event, $context), JSON_THROW_ON_ERROR);
-                        return $this->client->post(
-                            sprintf(
-                                'http://%s/2018-06-01/runtime/invocation/%s/response',
-                                $this->apiUrl,
-                                $context->getAwsRequestId()
-                            ),
-                            [
-                                'Content-Type' => 'application/json',
-                                'Content-Length: ' . strlen($jsonData),
-                            ],
-                            $jsonData
-                        );
+                        /** @var Context $context */
+                        [$promise, $context] = $data;
+
+                        return resolve($promise->then(
+                            function (array $response) use ($context) {
+                                $jsonData = json_encode($response, JSON_THROW_ON_ERROR);
+                                return $this->client->post(
+                                    sprintf(
+                                        'http://%s/2018-06-01/runtime/invocation/%s/response',
+                                        $this->apiUrl,
+                                        $context->getAwsRequestId()
+                                    ),
+                                    [
+                                        'Content-Type' => 'application/json',
+                                        'Content-Length: ' . strlen($jsonData),
+                                    ],
+                                    $jsonData
+                                );
+                            },
+                            function (Throwable $e) use ($callback) {
+                                $this->failInitialization('Process Next Event failed.', $e);
+                                $this->loop->futureTick($callback);
+                            }
+                        ));
                     } catch (\Throwable $error) {
-                        $jsonData = json_encode(
-                            [
-                                'errorMessage' => $error->getMessage(),
-                                'errorType' => get_class($error),
-                                'stackTrace' => explode(PHP_EOL, $error->getTraceAsString()),
-                            ],
-                            JSON_THROW_ON_ERROR
-                        );
-                        return $this->client->post(
-                            sprintf(
-                                'http://%s/2018-06-01/runtime/invocation/%s/error',
-                                $this->apiUrl,
-                                $context->getAwsRequestId()
-                            ),
-                            [
-                                'Content-Type' => 'application/json',
-                                'Content-Length: ' . strlen($jsonData),
-                            ],
-                            $jsonData
-                        );
+                        $this->failRuntime($error, $context);
                     }
                 }
             )->then(fn() => $this->loop->futureTick($callback));
 
         resolve($promise);
+    }
+
+    public function failRuntime(Throwable $error, Context $context)
+    {
+        $jsonData = json_encode(
+            [
+                'errorMessage' => $error->getMessage(),
+                'errorType' => get_class($error),
+                'stackTrace' => explode(PHP_EOL, $error->getTraceAsString()),
+            ],
+            JSON_THROW_ON_ERROR
+        );
+        return $this->client->post(
+            sprintf(
+                'http://%s/2018-06-01/runtime/invocation/%s/error',
+                $this->apiUrl,
+                $context->getAwsRequestId()
+            ),
+            [
+                'Content-Type' => 'application/json',
+                'Content-Length: ' . strlen($jsonData),
+            ],
+            $jsonData
+        );
     }
 
     public function failInitialization(string $message, ?\Throwable $error = null): void
@@ -158,8 +183,5 @@ class ReactRuntime
                 'stackTrace' => $error ? explode(PHP_EOL, $error->getTraceAsString()) : [],
             ]
         );
-
-        $this->loop->futureTick(static function () {});
     }
-
 }
