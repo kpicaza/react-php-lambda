@@ -2,7 +2,7 @@
 
 > Proof of Concept of Running React PHP in aws lambda server
 
-A proof of concept on how to run React-PHP on a serverless application at AWS Lambda service.
+A proof of concept on how to run [React-PHP](https://github.com/reactphp/reactphp) on a serverless application at AWS Lambda service using [Bref](https://github.com/brefphp/bref).
 ## Contributors
 
 * [xserrat](https://github.com/xserrat)
@@ -10,8 +10,9 @@ A proof of concept on how to run React-PHP on a serverless application at AWS La
 
 ## System Requirements
 
-* AWS Console with configured access
+* AWS Console with configured access keys.
 * Serverless Framework
+* PHP 7.4.3 or greater
 
 ## Goals
 
@@ -35,7 +36,17 @@ A proof of concept on how to run React-PHP on a serverless application at AWS La
 
 ## Usage
 
-git clone 
+```bash
+git clone git@github.com:kpicaza/react-php-lambda.git dev
+cd dev
+sls deploy # serverless deploy
+```
+
+### Remove stack from AWS
+
+```bash
+sls remove # serverless remove
+```
 
 ## Captures
 
