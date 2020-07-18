@@ -21,6 +21,7 @@ A proof of concept on how to run React-PHP on a serverless application at AWS La
 
 ## Especial thanks
 
+* [WyriHaximus](https://github.com/WyriHaximus), and [clue](https://github.com/clue) for making React-PHP
 * [mnapoli](https://github.com/mnapoli) For making Bref, opening a new world of possibilities for PHP
 * [mmoreram](https://github.com/mmoreram) For giving us he's perspective.
 
@@ -31,6 +32,10 @@ A proof of concept on how to run React-PHP on a serverless application at AWS La
 * We add a custom [bootstrap](https://github.com/kpicaza/react-php-lambda/blob/master/bootstrap) file using a React PHP event loop instead of the "while=true" loop given by default Bref bootstrap.
 * The given handler is managed with promises by the [ReactHandler](https://github.com/kpicaza/react-php-lambda/blob/master/src/ReactHandler.php) class 
 * We replace the [LambdaRuntime](https://github.com/brefphp/bref/blob/master/src/Runtime/LambdaRuntime.php) class by [ReactRuntime](https://github.com/kpicaza/react-php-lambda/blob/master/src/ReactRuntime.php) 
+
+## Usage
+
+git clone 
 
 ## Captures
 
