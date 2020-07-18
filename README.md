@@ -14,11 +14,20 @@ A proof of concept on how to run [React-PHP](https://github.com/reactphp/reactph
 * Serverless Framework
 * PHP 7.4.3 or greater
 
+## Premise
+
+If Node express can run natively in aws lambda, why not run React-PHP?
+
 ## Goals
 
 - [x] Execute an Async PRS-7 Request Handler from PSR-11 container
 - [ ] Execute callable class from PSR-11 container
 - [ ] Execute complete application like DriftPHP from a unique API Gateway entry-point
+
+## Missing Points
+
+- [ ] Check Interest in Bref project to add React-php handler
+- [ ] Learn how to deploy React-PHP-FPM 7.4 layer
 
 ## Especial thanks
 
