@@ -20,7 +20,7 @@ If Node express can run natively in aws lambda, why not run React-PHP?
 
 ## Goals
 
-- [x] Execute an Async PRS-7 Request Handler from PSR-11 container
+- [x] Execute an Async PSR-7 Request Handler from PSR-11 container
 - [ ] Execute callable class from PSR-11 container
 - [ ] Execute complete application like DriftPHP from a unique API Gateway entry-point
 
@@ -31,8 +31,8 @@ If Node express can run natively in aws lambda, why not run React-PHP?
 
 ## Especial thanks
 
-* [WyriHaximus](https://github.com/WyriHaximus), and [clue](https://github.com/clue) for making React-PHP
-* [mnapoli](https://github.com/mnapoli) For making Bref, opening a new world of possibilities for PHP
+* [WyriHaximus](https://github.com/WyriHaximus), and [clue](https://github.com/clue) for making React-PHP, adding a complete new paradigm to PHP.
+* [mnapoli](https://github.com/mnapoli) For making Bref, opening a new world of possibilities for PHP on cloud.
 * [mmoreram](https://github.com/mmoreram) For giving us he's perspective.
 
 
