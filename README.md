@@ -48,6 +48,7 @@ If Node express can run natively in aws lambda, why not run React-PHP?
 ```bash
 git clone git@github.com:kpicaza/react-php-lambda.git dev
 cd dev
+composer install --prefer-dist --optimize-autoloader --no-dev
 sls deploy # serverless deploy
 ```
 
