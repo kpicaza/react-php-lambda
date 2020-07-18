@@ -15,9 +15,9 @@ A proof of concept on how to run React-PHP on a serverless application at AWS La
 
 ## Goals
 
-[x] Execute an Async PRS-7 Request Handler from PSR-11 container
-[] Execute callable class from PSR-11 container
-[] Execute complete application like DriftPHP from a unique API Gateway entry-point
+- [x] Execute an Async PRS-7 Request Handler from PSR-11 container
+- [ ] Execute callable class from PSR-11 container
+- [ ] Execute complete application like DriftPHP from a unique API Gateway entry-point
 
 ## Especial thanks
 
